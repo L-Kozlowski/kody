@@ -1,0 +1,18 @@
+Powtorki
+NR:1 HASH: 0EBD8BDFE97F2DE1B51AA63E61BA2840CA1D9ED5115D1B5BB4458C420CCEEFDE
+	E:\semestr4\systemy_operacyjne\lab5\d1\d2\a.txt
+	E:\semestr4\systemy_operacyjne\lab5\d1\d2\asdsad\sss.txt
+NR:2 HASH: 368E0608076F20DD10DB3F014258CD5B71B98008133AD84C23250C946FAD8726
+	E:\semestr4\systemy_operacyjne\lab5\d1\1XkpFBN.jpg
+	E:\semestr4\systemy_operacyjne\lab5\d1\d2\1XkpFBN.jpg
+NR:3 HASH: 9834876DCFB05CB167A5C24953EBA58C4AC89B1ADF57F28F2F9D09AF107EE8F0
+	E:\semestr4\systemy_operacyjne\lab5\d1\Nowy dokument tekstowy.txt
+	E:\semestr4\systemy_operacyjne\lab5\d1\d4\sss.txt
+NR:4 HASH: E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855
+	E:\semestr4\systemy_operacyjne\lab5\d1\d2\asdsad\das.txt
+	E:\semestr4\systemy_operacyjne\lab5\d1\d2\asdsad\Nowy folder\sdad.txt
+	E:\semestr4\systemy_operacyjne\lab5\d1\d2\d3\d.txt
+	E:\semestr4\systemy_operacyjne\lab5\d1\d4\aa.txt
+	E:\semestr4\systemy_operacyjne\lab5\d1\d4\cc.txt
+	E:\semestr4\systemy_operacyjne\lab5\d1\d4\Nowy dokument tekstowy.txt
+	E:\semestr4\systemy_operacyjne\lab5\d1\aaaaaaaaaaaaaaaaaa.txt
