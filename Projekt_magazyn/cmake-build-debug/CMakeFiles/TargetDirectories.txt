@@ -1,0 +1,3 @@
+D:/Projekty/Projekt_magazyn/cmake-build-debug/CMakeFiles/Projekt_magazyn.dir
+D:/Projekty/Projekt_magazyn/cmake-build-debug/CMakeFiles/edit_cache.dir
+D:/Projekty/Projekt_magazyn/cmake-build-debug/CMakeFiles/rebuild_cache.dir
