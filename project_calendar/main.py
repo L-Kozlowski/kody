@@ -13,153 +13,211 @@ font = pygame.font.SysFont('comicsans', 50)
 font2 = pygame.font.SysFont('comicsans', 25)
 
 
-def draw_date(day, month, x, y):
+class Board:
+    def __init__(self):
+        self.year = menu.init_list()
+        self.today_day = date.today().day
+        self.today_month = date.today().month
+        self.display_day = self.today_day
+        self.display_month = self.today_month
+        self.change_day = 0
+        self.marks_list = [0 for _ in range(72)]
+        self.inp_box_active = False
+        self.inp_box_col_inactive = (0, 100, 100)
+        self.inp_box_col_active = (0, 200, 200)
+        self.save_index_marks = -1
+        self.marks_day = -10
 
-    if day <= 0:
-        month -= 1
-        day += year.get_count_day_in_month(month)
-        if month < 10:
-            text = font.render(str(day) + ".0" + str(month), 1, (0, 0, 0))
-        else:
-            text = font.render(str(day) + "." + str(month), 1, (0, 0, 0))
-    elif 0 < day < 10:
-        if month < 10:
-            text = font.render("0" + str(day) + ".0" + str(month), 1, (0, 0, 0))
-        else:
-            text = font.render("0" + str(day) + "." + str(month), 1, (0, 0, 0))
-    else:
-        if month < 10:
-            text = font.render(str(day) + ".0" + str(month), 1, (0, 0, 0))
-        else:
-            text = font.render(str(day) + "." + str(month), 1, (0, 0, 0))
+    def convert_date(self, day, month):
+        if day > self.year.get_count_day_in_month(month):
+            day -= self.year.get_count_day_in_month(month)
+            month += 1
 
-    window.blit(text, (x, y))
-
-
-def heading():
-    pygame.draw.rect(window, (180, 180, 180), (10, 10, 980, 70))
-    today_day = date.today().day
-    today_month = date.today().month
-    text = font.render("Today: " + str(today_day) + ".0" + str(today_month) + ".2021", 1, (0, 0, 0))
-    window.blit(text, (20, 25))
-
-    now = datetime.now()
-    current_time = now.strftime("%H:%M:%S")
-    time = font.render(current_time, 1, (0, 0, 0))
-    window.blit(time, (830, 25))
-
-
-def draw_columns(x, distance_column, mouse_pos):
-    for i in range(24):
-        box = pygame.Rect(x, 125 + 30 * (i + 1), 310, 30)
-        if box.collidepoint(mouse_pos):
-            pygame.draw.rect(window, (0, 100, 0), box)
-            marks_list[i + distance_column * 24] = 1
-        else:
-            marks_list[i + distance_column * 24] = 0
-            if i % 2:
-                pygame.draw.rect(window, (100, 100, 100), box)
+        if day <= 0:
+            month -= 1
+            day += self.year.get_count_day_in_month(month)
+            if month < 10:
+                text = str(day) + ".0" + str(month)
             else:
-                pygame.draw.rect(window, (150, 150, 150), box)
-
-
-def display_3_days(year, days, mouse_pos):
-    """
-    display 3 days - yesterday, today, tomorrow with hour plan
-    :param year: obj class Year
-    :return: none
-    """
-    today_day = date.today().day
-    today_month = date.today().month
-    if days > 0:
-        today_day += days  # > month.day.size
-        while True:
-            if today_day > year.get_count_day_in_month(today_month) - 1:
-                today_day -= year.get_count_day_in_month(today_month)
-                today_month += 1
+                text = str(day) + "." + str(month)
+        elif 0 < day < 10:
+            if month < 10:
+                text = "0" + str(day) + ".0" + str(month)
             else:
-                break
-    if days <= 0:
-        today_day += days  # > month.day.size
-        while True:
-            if today_day <= 0:
-                today_month -= 1
-                today_day += year.get_count_day_in_month(today_month)
+                text = "0" + str(day) + "." + str(month)
+        else:
+            if month < 10:
+                text = str(day) + ".0" + str(month)
             else:
-                break
+                text = str(day) + "." + str(month)
 
-    if today_day == 1:
-        yesterday = year.get_day_plan_list(today_month - 1, 0)
-    else:
-        yesterday = year.get_day_plan_list(today_month, today_day - 1)
+        return str(text)
 
-    today = year.get_day_plan_list(today_month, today_day)
-    if today_day == year.get_count_day_in_month(today_month):
-        tomorrow = year.get_day_plan_list(today_month + 1, 0)
-    else:
-        tomorrow = year.get_day_plan_list(today_month, today_day + 1)
+    def draw_date(self, day, month, x, y):
+        black_color = (0, 0, 0)
+        text = Board.convert_date(self, day, month)
+        text = font.render(text, True, black_color)
+        window.blit(text, (x, y))
 
-    draw_date(today_day - 1, today_month, 125, 100)
-    draw_date(today_day, today_month, 450, 100)
-    draw_date(today_day + 1, today_month, 775, 100)
+    def heading(self):
+        black_color = (0, 0, 0)
+        pygame.draw.rect(window, (180, 180, 180), (10, 10, 980, 70))
+        text = font.render("Today: " + str(self.today_day) + ".0" + str(self.today_month) + ".2021", True, black_color)
+        window.blit(text, (20, 25))
+    
+        now = datetime.now()
+        current_time = now.strftime("%H:%M:%S")
+        time = font.render(current_time, True, black_color)
+        window.blit(time, (830, 25))
+    
+    def draw_columns(self, x, distance_column, mouse_pos):
+        for i in range(24):
+            box = pygame.Rect(x, 125 + 30 * (i + 1), 310, 30)
+            if box.collidepoint(mouse_pos):
+                self.marks_list[i + distance_column * 24] = 1
+                self.save_index_marks = i + distance_column * 24
+            else:
+                self.marks_list[i + distance_column * 24] = 0
+                if i % 2:
+                    pygame.draw.rect(window, (100, 100, 100), box)
+                else:
+                    pygame.draw.rect(window, (150, 150, 150), box)
 
-    # LEFT COLUMN
-    draw_columns(10, 0, mouse_pos)
-    for i in range(24):
-        time = font2.render(yesterday[i][0], 1, (0, 0, 0))
-        window.blit(time, (20, 130 + 30 * (i + 1)))
-        text = font2.render(yesterday[i][1], 1, (0, 0, 0))
-        window.blit(text, (80, 130 + 30 * (i + 1)))
+            if self.save_index_marks == i and distance_column == 0:
+                pygame.draw.rect(window, (0, 100, 0), box)
+            elif self.save_index_marks == i + 24 and distance_column == 1:
+                pygame.draw.rect(window, (0, 100, 0), box)
+            elif self.save_index_marks == i + 48 and distance_column == 2:
+                pygame.draw.rect(window, (0, 100, 0), box)
 
-    pygame.draw.line(window, (0, 0, 0), (100, 155), (100, 875))
+    def display_3_days(self, mouse_pos):
+        """
+        display 3 days - yesterday, today, tomorrow with hour plan
+        :param mouse_pos: save mouse position
+        :return: none
+        """
+        self.display_day = self.today_day
+        self.display_month = self.today_month
+        black_color = (0, 0, 0)
+        if self.change_day > 0:
+            self.display_day += self.change_day  # > month.day.size
+            while True:
+                if self.display_day > self.year.get_count_day_in_month(self.display_month) - 1:
+                    self.display_day -= self.year.get_count_day_in_month(self.display_month)
+                    self.display_month += 1
+                else:
+                    break
+        if self.change_day <= 0:
+            self.display_day += self.change_day  # > month.day.size
+            while True:
+                if self.display_day <= 0:
+                    self.display_month -= 1
+                    self.display_day += self.year.get_count_day_in_month(self.display_month)
+                else:
+                    break
 
-    # MIDDLE COLUMN
-    draw_columns(345, 1, mouse_pos)
-    for i in range(24):
-        time = font2.render(today[i][0], 1, (0, 0, 0))
-        window.blit(time, (355, 130 + 30 * (i + 1)))
-        text = font2.render(today[i][1], 1, (0, 0, 0))
-        window.blit(text, (415, 130 + 30 * (i + 1)))
+        if self.display_day == 1:
+            yesterday = self.year.get_day_plan_list(self.display_month - 1, 0)
+        else:
+            yesterday = self.year.get_day_plan_list(self.display_month, self.display_day - 1)
 
-    pygame.draw.line(window, (0, 0, 0), (425, 155), (425, 875))
+        today = self.year.get_day_plan_list(self.display_month, self.display_day)
+        if self.display_day == self.year.get_count_day_in_month(self.display_month):
+            tomorrow = self.year.get_day_plan_list(self.display_month + 1, 0)
+        else:
+            tomorrow = self.year.get_day_plan_list(self.display_month, self.display_day + 1)
 
-    # RIGHT COLUMN
-    draw_columns(680, 2, mouse_pos)
-    for i in range(24):
-        time = font2.render(tomorrow[i][0], 1, (0, 0, 0))
-        window.blit(time, (690, 130 + 30 * (i + 1)))
-        text = font2.render(tomorrow[i][1], 1, (0, 0, 0))
-        window.blit(text, (740, 130 + 30 * (i + 1)))
+        Board.draw_date(self, self.display_day - 1, self.display_month, 125, 100)
+        Board.draw_date(self, self.display_day, self.display_month, 450, 100)
+        Board.draw_date(self, self.display_day + 1, self.display_month, 775, 100)
 
-    pygame.draw.line(window, (0, 0, 0), (760, 155), (760, 875))
+        # LEFT COLUMN
+        Board.draw_columns(self, 10, 0, mouse_pos)
+        for i in range(24):
+            time = font2.render(yesterday[i][0], True, black_color)
+            window.blit(time, (20, 130 + 30 * (i + 1)))
+            text = font2.render(yesterday[i][1], True, black_color)
+            window.blit(text, (80, 130 + 30 * (i + 1)))
+
+        pygame.draw.line(window, black_color, (100, 155), (100, 875))
+
+        # MIDDLE COLUMN
+        Board.draw_columns(self, 345, 1, mouse_pos)
+        for i in range(24):
+            time = font2.render(today[i][0], True, black_color)
+            window.blit(time, (355, 130 + 30 * (i + 1)))
+            text = font2.render(today[i][1], True, black_color)
+            window.blit(text, (415, 130 + 30 * (i + 1)))
+
+        pygame.draw.line(window, black_color, (425, 155), (425, 875))
+
+        # RIGHT COLUMN
+        Board.draw_columns(self, 680, 2, mouse_pos)
+        for i in range(24):
+            time = font2.render(tomorrow[i][0], True, black_color)
+            window.blit(time, (690, 130 + 30 * (i + 1)))
+            text = font2.render(tomorrow[i][1], True, black_color)
+            window.blit(text, (740, 130 + 30 * (i + 1)))
+
+        pygame.draw.line(window, black_color, (760, 155), (760, 875))
+
+    def footer(self, mouse_pos):
+        input_box = pygame.Rect(400, 940, 500, 50)
+
+        if input_box.collidepoint(mouse_pos):
+            inp_box_active = True
+        else:
+            inp_box_active = False
+
+        if inp_box_active:
+            pygame.draw.rect(window, self.inp_box_col_active, input_box, 3)
+        else:
+            pygame.draw.rect(window, self.inp_box_col_inactive, input_box, 3)
+
+        show_box = pygame.Rect(100, 940, 200, 50)
+        pygame.draw.rect(window, (150, 150, 150), show_box)
+        pygame.draw.rect(window, (50, 50, 50), show_box, 3)
+
+        if self.save_index_marks < 0:
+            chosen_date = ""
+            self.marks_day = -10
+        elif self.save_index_marks < 24:
+            chosen_date = Board.convert_date(board, self.display_day - 1, self.display_month)
+            chosen_date = chosen_date + " " + str(self.save_index_marks) + ":00"
+            self.marks_day = self.display_day - 1
+        elif self.save_index_marks < 48:
+            chosen_date = Board.convert_date(board, self.display_day, self.display_month)
+            time = self.save_index_marks - 24
+            chosen_date = chosen_date + " " + str(time) + ":00"
+            self.marks_day = self.display_day
+        elif self.save_index_marks < 72:
+            chosen_date = Board.convert_date(board, self.display_day + 1, self.display_month)
+            time = self.save_index_marks - 48
+            chosen_date = chosen_date + " " + str(time) + ":00"
+            self.marks_day = self.display_day + 1
+        else:
+            chosen_date = ""
+            self.marks_day = -10
+
+        black_color = (0, 0, 0)
+        chosen_date = font.render(chosen_date, True, black_color)
+        window.blit(chosen_date, (show_box.x + 5, show_box.y + 5))
+
+    def display_marks(self):
+        for idx, mark in enumerate(self.marks_list):
+            if mark:
+                print("Mark:", idx)
 
 
-def footer(mouse_pos):
-    input_box = pygame.Rect(400, 940, 500, 50)
-
-    if input_box.collidepoint(mouse_pos):
-        inp_box_active = True
-    else:
-        inp_box_active = False
-
-    if inp_box_active:
-        pygame.draw.rect(window, inp_box_col_active, input_box, 3)
-    else:
-        pygame.draw.rect(window, inp_box_col_inactive, input_box, 3)
-
-    show_box = pygame.Rect(100, 940, 200, 50)
-    pygame.draw.rect(window, (150, 150, 150), show_box)
-    pygame.draw.rect(window, (50, 50, 50), show_box, 3)
-
-
-def red_raw_game_window(year, mouse_pos):
+def red_raw_game_window(obj, mouse_pos):
     window.fill((0, 128, 128))
-    display_3_days(year, change_day,mouse_pos)
-    heading()
+    Board.display_3_days(obj, pos)
+    Board.heading(obj)
     button_next.draw(window, True)
     button_back.draw(window, True)
     button_today.draw(window, True)
-    footer(mouse_pos)
+    Board.footer(obj, mouse_pos)
+    # Board.display_marks(board)
     pygame.display.update()
 
 
@@ -170,18 +228,13 @@ clock = pygame.time.Clock()
 button_next = Button((100, 100, 100), 820, 900, 80, 30, "NEXT")
 button_back = Button((100, 100, 100), 100, 900, 80, 30, "BACK")
 button_today = Button((100, 100, 100), 470, 900, 80, 30, "TODAY")
-year = menu.init_list()
-change_day = 0
 pos = (0, 0)
-marks_list = [0 for _ in range(72)]
-inp_box_active = False
-inp_box_col_inactive = (0, 100, 100)
-inp_box_col_active = (0, 200, 200)
+board = Board()
 
 while run:
     clock.tick(27)
 
-    red_raw_game_window(year, pos)
+    red_raw_game_window(board, pos)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -190,14 +243,14 @@ while run:
         if event.type == pygame.MOUSEBUTTONUP:
             pos = pygame.mouse.get_pos()
             if button_next.isOver(pos):
-                change_day += 1
+                board.change_day += 1
+                board.save_index_marks -= 24
             if button_back.isOver(pos):
-                change_day -= 1
+                board.change_day -= 1
+                board.save_index_marks += 24
             if button_today.isOver(pos):
-                change_day = 0
+                board.change_day = 0
+                board.save_index_marks = -1
 
-    for idx, mark in enumerate(marks_list):
-        if mark:
-            print("Mark:", idx )
 
 pygame.quit()
