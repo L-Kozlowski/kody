@@ -3,6 +3,7 @@ from button import Button
 import pygame
 from datetime import date
 from datetime import datetime
+import file
 
 # menu.head_menu()
 
@@ -27,6 +28,8 @@ class Board:
         self.inp_box_col_active = (0, 200, 200)
         self.save_index_marks = -1
         self.marks_day = -10
+        self.input_text = ""
+        self.date_list = []
 
     def convert_date(self, day, month):
         if day > self.year.get_count_day_in_month(month):
@@ -137,7 +140,7 @@ class Board:
             time = font2.render(yesterday[i][0], True, black_color)
             window.blit(time, (20, 130 + 30 * (i + 1)))
             text = font2.render(yesterday[i][1], True, black_color)
-            window.blit(text, (80, 130 + 30 * (i + 1)))
+            window.blit(text, (105, 130 + 30 * (i + 1)))
 
         pygame.draw.line(window, black_color, (100, 155), (100, 875))
 
@@ -147,7 +150,7 @@ class Board:
             time = font2.render(today[i][0], True, black_color)
             window.blit(time, (355, 130 + 30 * (i + 1)))
             text = font2.render(today[i][1], True, black_color)
-            window.blit(text, (415, 130 + 30 * (i + 1)))
+            window.blit(text, (430, 130 + 30 * (i + 1)))
 
         pygame.draw.line(window, black_color, (425, 155), (425, 875))
 
@@ -157,24 +160,19 @@ class Board:
             time = font2.render(tomorrow[i][0], True, black_color)
             window.blit(time, (690, 130 + 30 * (i + 1)))
             text = font2.render(tomorrow[i][1], True, black_color)
-            window.blit(text, (740, 130 + 30 * (i + 1)))
+            window.blit(text, (765, 130 + 30 * (i + 1)))
 
         pygame.draw.line(window, black_color, (760, 155), (760, 875))
 
     def footer(self, mouse_pos):
-        input_box = pygame.Rect(400, 940, 500, 50)
+        input_box = pygame.Rect(450, 940, 500, 50)
 
-        if input_box.collidepoint(mouse_pos):
-            inp_box_active = True
-        else:
-            inp_box_active = False
-
-        if inp_box_active:
+        if self.inp_box_active:
             pygame.draw.rect(window, self.inp_box_col_active, input_box, 3)
         else:
             pygame.draw.rect(window, self.inp_box_col_inactive, input_box, 3)
 
-        show_box = pygame.Rect(100, 940, 200, 50)
+        show_box = pygame.Rect(180, 940, 200, 50)
         pygame.draw.rect(window, (150, 150, 150), show_box)
         pygame.draw.rect(window, (50, 50, 50), show_box, 3)
 
@@ -200,13 +198,33 @@ class Board:
             self.marks_day = -10
 
         black_color = (0, 0, 0)
-        chosen_date = font.render(chosen_date, True, black_color)
-        window.blit(chosen_date, (show_box.x + 5, show_box.y + 5))
+        font_chosen_date = font.render(chosen_date, True, black_color)
+        window.blit(font_chosen_date, (show_box.x + 5, show_box.y + 5))
 
-    def display_marks(self):
-        for idx, mark in enumerate(self.marks_list):
-            if mark:
-                print("Mark:", idx)
+        self.date_list = chosen_date.split(" ")
+        show_input_text = font.render(self.input_text, True, black_color)
+        window.blit(show_input_text, (input_box.x + 5, input_box.y + 5))
+
+    def input_text(self, event):
+        if len(self.date_list) > 1:
+            chosen_time = self.date_list[1]
+            chosen_time = int(chosen_time.split(":")[0])
+            chosen_day = int(self.date_list[0].split(".")[0])
+            chosen_month = int(self.date_list[0].split(".")[1])
+            # if self.inp_box_active:
+            if event.type == pygame.KEYDOWN:
+                self.inp_box_active = True
+                if event.key == pygame.K_RETURN:
+                    self.year.change_string(chosen_month, chosen_day, chosen_time, self.input_text)
+                    self.input_text = ""
+                    self.inp_box_active = False
+                elif event.key == pygame.K_BACKSPACE:
+                    self.input_text = self.input_text[:-1]
+                else:
+                    if len(self.input_text) > 22:
+                        self.input_text += ""
+                    else:
+                        self.input_text += event.unicode
 
 
 def red_raw_game_window(obj, mouse_pos):
@@ -216,6 +234,7 @@ def red_raw_game_window(obj, mouse_pos):
     button_next.draw(window, True)
     button_back.draw(window, True)
     button_today.draw(window, True)
+    button_clean.draw(window, True)
     Board.footer(obj, mouse_pos)
     # Board.display_marks(board)
     pygame.display.update()
@@ -225,9 +244,10 @@ def red_raw_game_window(obj, mouse_pos):
 
 run = True
 clock = pygame.time.Clock()
-button_next = Button((100, 100, 100), 820, 900, 80, 30, "NEXT")
-button_back = Button((100, 100, 100), 100, 900, 80, 30, "BACK")
-button_today = Button((100, 100, 100), 470, 900, 80, 30, "TODAY")
+button_next = Button((100, 100, 100), 820, 895, 80, 30, "NEXT")
+button_back = Button((100, 100, 100), 100, 895, 80, 30, "BACK")
+button_today = Button((100, 100, 100), 470, 895, 80, 30, "TODAY")
+button_clean = Button((100, 100, 100), 50, 945, 80, 40, "CLEAN")
 pos = (0, 0)
 board = Board()
 
@@ -238,6 +258,7 @@ while run:
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
+            file.write_to_file(board.year)
             run = False
 
         if event.type == pygame.MOUSEBUTTONUP:
@@ -251,6 +272,11 @@ while run:
             if button_today.isOver(pos):
                 board.change_day = 0
                 board.save_index_marks = -1
+            if button_clean.isOver(pos):
+                board.save_index_marks = -1
+                board.input_text = ""
+                board.inp_box_active = False
+        Board.input_text(board, event)
 
 
 pygame.quit()

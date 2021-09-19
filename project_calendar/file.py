@@ -15,7 +15,7 @@ def write_to_file(list_file_year):
             for day in month.days:
                 f.write("#" + str(day.name) + " ||")
                 for hour in day.hours:
-                    f.write(str(hour.name) + " | ")
+                    f.write(str(hour.name) + "|")
                     f.write(str(hour.str) + "||\t")
                 f.write("\n")
             f.write("\n")
