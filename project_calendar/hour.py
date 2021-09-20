@@ -7,13 +7,6 @@ class Hour:
         self.name = name
         self.str = ""
 
-    def display(self):
-        """
-        display time + plan
-        :return:
-        """
-        print(f"{self.name}:00 | {self.str}")
-
     def change_string(self, new_string):
         """
         :param new_string: new text to change

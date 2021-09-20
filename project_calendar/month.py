@@ -15,20 +15,6 @@ class Month:
         for i in range(1, number_day + 1):
             self.days.append(Day(i))
 
-    def display(self):
-        """
-        print all day in the month
-        :return:
-        """
-        print(self.name[self.number_month - 1])
-        for day in self.days:
-            if not int(day.name) % 10:
-                print(day.name)
-            else:
-                print(day.name, end=" ")
-        if self.days[-1].name == 31 or self.days[-1].name < 30:
-            print()
-
     def get_name(self):
         """
         :return: name of the month

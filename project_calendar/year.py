@@ -1,6 +1,4 @@
 import calendar
-
-import month
 from month import Month
 
 
@@ -16,15 +14,6 @@ class Year:
             days_in_month = calendar.monthrange(number_year, i)[1]
             self.months.append(Month(i, days_in_month))
 
-    def display(self):
-        """
-        display all months with the days in the year
-        :return: none
-        """
-        print(self.number_year)
-        for month in self.months:
-            month.display()
-
     def change_string(self, number_month, number_day, number_hour, new_string):
         """
         change plan of the hour
@@ -37,18 +26,6 @@ class Year:
         number_month -= 1
         number_day -= 1
         self.months[number_month].days[number_day].hours[number_hour].change_string(new_string)
-
-    def display_day(self, number_month, number_day):
-        """
-        display an hour plan of the specific day
-        :param number_month: number of the month
-        :param number_day: number of the day
-        :return:
-        """
-        number_month -= 1
-        number_day -= 1
-        print(self.months[number_month].get_name(), self.number_year)
-        self.months[number_month].days[number_day].display()
 
     def get_number_day(self):
         """
@@ -66,5 +43,5 @@ class Year:
         day -= 1
         return self.months[month].days[day].get_list_day()
 
-    def get_count_day_in_month(self,number_month):
+    def get_count_day_in_month(self, number_month):
         return len(self.months[number_month-1].days)

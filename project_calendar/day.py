@@ -19,15 +19,6 @@ class Day:
         Day.count += 1
         self.count_day = Day.count
 
-    def display(self):
-        """
-        display 24 hours plan in day
-        :return: None
-        """
-        print("Day", self.name, "and It is", self.count_day, "day in year")
-        for hour in self.hours:
-            hour.display()
-
     def get_list_day(self):
         """
         :return: list of 24 hours with plans in a day
